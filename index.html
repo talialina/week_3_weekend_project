@@ -4,64 +4,66 @@
     <meta charset="utf-8" />
     <title>The Loneliest Chatroom</title>
     <style>
-      *{
+      * {
         box-sizing: border-box;
-        font-family: "Arial Black", Gadget, sans-serif
+        font-family: "Roboto", Gadget, sans-serif;
       }
-      body{
-        background-color: lightgoldenrodyellow;
+      body {
+        background-color: rgb(250, 234, 210);
       }
-      #main{
+      #main {
         display: grid;
         grid-template-columns: 1fr;
         grid-gap: 10px;
         margin: 0 10%;
       }
-      #heading{
+      #heading {
         display: grid;
         place-items: center;
-        background-color: aliceblue;
-        border-radius: 10px;
+        background-color: rgb(231, 184, 202);
+        border-radius: 5px;
         padding: 30px;
+        color: aqua;
       }
-      h1, h3{
+      h1,
+      h3 {
         margin: 0;
-        text-shadow: 3px 3px 3px lightgray;
+        text-shadow: 1.5px 1.5px 1.5px rgb(73, 73, 73);
       }
-      #chatbox{
+      #chatbox {
         height: 400px;
         padding: 20px;
-        background-color: white;
+        background-color: rgb(209, 170, 143);
         border-radius: 10px;
         display: grid;
         grid-template-columns: 1fr;
         align-content: start;
         overflow-y: scroll;
       }
-      .message{
+      .message {
         display: grid;
         grid-template-columns: 1fr 65px 10fr 1fr;
         grid-gap: 10px;
         padding: 5px;
         border-radius: 5px;
       }
-      .message:hover{
-        background-color: lightgray;
+      .message:hover {
+        background-color: rgb(183, 243, 115);
       }
-      input{
+      input {
         width: 100%;
         font-size: 1.5rem;
         padding: 5px;
       }
-      button{
+      button {
         font-size: 1.5rem;
         padding: 5px;
         cursor: pointer;
       }
-      .sender{
-        color: blue;
+      .sender {
+        color: #66cccc;
       }
-      .delete{
+      .delete {
         cursor: pointer;
         justify-self: end;
       }
@@ -78,19 +80,58 @@
           <span>10:22</span>
           <span class="sender">Myself:</span>
           <span>Is it me you're looking for?</span>
-          <span class="delete">❌</span>
+          <span class="delete">☹</span>
         </div>
         <div class="message" id="1">
           <span>10:21</span>
           <span class="sender">Me:</span>
           <span>Hello?</span>
-          <span class="delete">❌</span>
+          <span class="delete">☹</span>
         </div>
       </div>
-      <form><input type="text"/></form>
-      <button>I'm feeling Lonely!</button>
+      <form><input type="text" /></form>
+      <button><span>🥺...so so lonely...🥺</span></button>
     </div>
     <script>
+      const input = document.querySelector("input");
+      const form = document.querySelector("form");
+      const button = document.querySelector("button");
+      const chatbox = document.querySelector("#chatbox");
+      let id = 0;
+
+      form.addEventListener("submit", handleSubmit);
+      button.addEventListener("click", chuck);
+
+      function handleSubmit(event) {
+        event.preventDefault();
+        const sender = ["Me", "Myself", "I"][Math.floor(Math.random() * 3)];
+        createMessage(sender, input.value);
+        form.reset();
+      }
+      function chuck() {
+        fetch("https://api.icndb.com/jokes/random")
+          .then((response) => response.json())
+          .then((json) => createMessage("Fact", json.value.joke));
+      }
+
+      function createMessage(sender, messageText) {
+        if (!messageText.length) return;
+        id++;
+        const timestamp = new Date().toLocaleDateString();
+        const message = `<div class='message' id='${id}'>
+                            <span>${timestamp}</span>
+                            <span class="sender">${sender}:</span>
+                            <span>${messageText}</span>
+                            <span class="delete" onclick='deleteMessage(${id})'>Delete</span>
+                              </div>`;
+
+        chatbox.innerHTML += message;
+        chatbox.scrollTop = chatbox.scrollHeight;
+      }
+      function deleteMessage(id) {
+        const message = document.getElementById(id);
+        message.remove();
+      }
     </script>
   </body>
 </html>
